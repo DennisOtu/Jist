@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="style.css"/>
+    <title>Jist</title>
+  </head>
+  <body>
+    <h1 class="appName">Jist</h1>
+    <div class="main">
+        <ul class="msgThread" id="msgThread"></ul>
+        <form class="msgForm" id="msgForm" action="">
+            <input class="msgTxtBox" id="msgTxtBox" autocomplete="off" /><button class="btnSend">Send</button>
+        </form>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="main.js"></script>   
+  </body>
+</html>
