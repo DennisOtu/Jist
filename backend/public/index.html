@@ -6,14 +6,24 @@
     <title>Jist</title>
   </head>
   <body>
-    <h1 class="appName">Jist</h1>
     <div class="main">
+        <div style="display: inline-flex; width: 100%; text-align: center;">
+            <p style="padding: 10px; 
+                    font-size: 12px; 
+                    font-weight: 700; 
+                    color: #7e7e7e; 
+                    background-color: #ebebeb;
+                    font-style: italic;" 
+                >You are:
+            </p>
+
+            <input type="text" id="senderID" class="senderID" value="Anon" maxlength="20"/>
+        </div>
         <ul class="msgThread" id="msgThread"></ul>
         <form class="msgForm" id="msgForm" action="">
             <input class="msgTxtBox" id="msgTxtBox" autocomplete="off" /><button class="btnSend">Send</button>
         </form>
     </div>
-
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="main.js"></script>   

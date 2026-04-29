@@ -2,65 +2,41 @@ const socket = io();
 const msgForm = document.getElementById('msgForm');
 const msgTxtBox = document.getElementById('msgTxtBox');
 const msgThread = document.getElementById('msgThread');
+const senderID = document.getElementById('senderID');
 
 msgForm.addEventListener('submit', (e) => {
     e.preventDefault();
     sendMessage()
 });
 
-socket.on('chat message', (msg) => {
-    /*
-    const item = document.createElement('li');
-    item.textContent = msg;
-    msgThread.appendChild(item);
-    */
-
-    addMessageToUI(false, msg)
+socket.on('chat message', (data) => {
+    addMessageToUI(false, data)
 });
-
 
 function sendMessage() {
     if (msgTxtBox.value) {
-    socket.emit('chat message', msgTxtBox.value);
-    addMessageToUI(true, msgTxtBox.value)
-    msgTxtBox.value = '';
+        const data = {
+            name: senderID.value,
+            message: msgTxtBox.value,
+        }
+        socket.emit('chat message', data);
+        addMessageToUI(true, data)
+        msgTxtBox.value = '';
     }
-
-
-    /*
-    if (messageInput.value === '') return
-    // console.log(messageInput.value)
-    const data = {
-    name: nameInput.value,
-    message: messageInput.value,
-    dateTime: new Date(),
-    }
-    socket.emit('message', data)
-    addMessageToUI(true, data)
-    messageInput.value = ''
-    */
 }
 
 function addMessageToUI(isOwnMessage, data) {
     const element = `<li class="${isOwnMessage ? 'msgRight' : 'msgLeft'}">
                         <p class="msg">
-                            ${data}
-                        </p>
-                    </li>`
-    /*
-    clearFeedback()
-    const element = `<li class="${isOwnMessage ? 'message-right' : 'message-left'}">
-                        <p class="message">
                             ${data.message}
-                            <span>${data.name} ● ${moment(data.dateTime).fromNow()}</span>
+                            <br>
+                            <span style="font-size: 9px; font-style: italic;">${data.name}</span>
                         </p>
                     </li>`
-    */
-
-  msgThread.innerHTML += element
-  scrollToBottom()
+    msgThread.innerHTML += element
+    scrollToBottom()
 }
 
 function scrollToBottom() {
-  msgThread.scrollTo(0, msgThread.scrollHeight)
+    msgThread.scrollTo(0, msgThread.scrollHeight)
 }

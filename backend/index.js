@@ -7,7 +7,6 @@ import { Server } from 'socket.io';
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(express.static(join(__dirname, 'public')))
@@ -16,22 +15,13 @@ app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'index.html'));
 });
 
-
-/*io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
-*/
-
 io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
 
-    socket.on('chat message', (msg) => {
-        console.log(`Message from ${socket.id}: ${msg}`);
-        //io.emit('chat message', `${socket.id} : ${msg}`);
-        socket.broadcast.emit('chat message',  `${socket.id} : ${msg}` )
+    socket.on('chat message', (data) => {
+        console.log(`Message from ${data.name}: ${data.message}`);
+        //io.emit('chat message', `${socket.id} : ${data}`);
+        socket.broadcast.emit('chat message', data)
     });
 
     socket.on('disconnect', () => {
