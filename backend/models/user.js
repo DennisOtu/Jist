@@ -11,10 +11,10 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please enter a valid phone number'],
         unique: true,
         // Ensures the string has exactly 10 characters
-        minLength: [10, 'Model number must have minimum 10 digits'],
-        maxLength: [10, 'Model number must have maximum 10 digits'],
-        // Ensures all characters are numeric digits
-        match: [/^\d{10}$/, 'Model number must only contain 10 digits']        
+        minLength: [10, 'Phone number must be 10 digits long'],
+        maxLength: [10, 'Phone number must be 10 digits long'],
+        // Ensures all characters are numbers
+        match: [/^\d{10}$/, 'Phone number must contain only numerical values']        
     },
     socketID: {
         type: String,
@@ -36,4 +36,5 @@ userSchema.statics.login = async function (name, phone){
 }
 
 const User = mongoose.model('user', userSchema);
-module.exports = User;
+
+export default User

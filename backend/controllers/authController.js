@@ -1,4 +1,4 @@
-import User from '../models/user'
+import User from '../models/user.js'
 import jwt from 'jsonwebtoken';
 
 const maxAge = 24 * 60 * 60
@@ -23,7 +23,8 @@ const alertError = (err) => {
     }
     return errors
 }
-module.exports.signup = async (req, res) => {
+
+export const signup = async (req, res) => {
     const { name, phone} = req.body;
     try {
         const user = await User.create({ name, phone });
@@ -38,7 +39,7 @@ module.exports.signup = async (req, res) => {
     }
 }
 
-module.exports.login = async (req, res) => {
+export const login = async (req, res) => {
     const { name, phone } = req.body;
     try {
         const user = await User.login(name, phone );
@@ -51,7 +52,7 @@ module.exports.login = async (req, res) => {
     }
 }
 
-module.exports.verifyUser = (req, res, next)=>{
+export const verifyUser = (req, res, next)=>{
     const token = req.cookies.jwt;
     if(token){
         jwt.verify(token,'chatroom secret',async (err,decodedToken)=>{
@@ -68,7 +69,7 @@ module.exports.verifyUser = (req, res, next)=>{
     }
 }
 
-module.exports.logout = (req, res) => {
+export const logout = (req, res) => {
     res.cookie('jwt',"",{maxAge:1});
     res.status(200).json({logout: true});
 }

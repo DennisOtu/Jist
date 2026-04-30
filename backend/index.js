@@ -5,6 +5,8 @@ import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config()
 
@@ -15,6 +17,11 @@ const io = new Server(server);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.use(express.static(join(__dirname, 'public')))
+app.use(express.json());
+app.use(cookieParser()); 
+
+app.use('/api/vi/auth', authRoutes);
+//app.use("*", (req, res) => res.status(404).json({ error: "page not found" }))
 
 mongoose.connect(process.env.MONGODB_URI, { dbName: 'jist' })
   .then(() => console.log('DB Connected'))

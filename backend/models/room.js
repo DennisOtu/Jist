@@ -17,4 +17,5 @@ const roomSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 })
 const Room = mongoose.model('room', roomSchema);
-module.exports = Room;
+
+export default Room
