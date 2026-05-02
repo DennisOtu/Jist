@@ -13,6 +13,11 @@ socket.on('chat message', (data) => {
     addMessageToUI(false, data)
 });
 
+socket.on('socketID',(ID) => {
+    console.log(`Socket Id: ${ID}`)
+    sessionStorage.setItem('socketID', ID)
+})
+
 function sendMessage() {
     if (msgTxtBox.value) {
         const data = {

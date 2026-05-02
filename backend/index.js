@@ -33,6 +33,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+    socket.emit('socketID', socket.id);
     console.log(`${socket.id} Connected`);
 
     socket.on('chat message', (data) => {
