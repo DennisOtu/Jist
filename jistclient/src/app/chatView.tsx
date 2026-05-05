@@ -1,27 +1,35 @@
 //import { globalStyles } from '@/styles/global';
 import React, { useRef, useState } from 'react';
-import { Text, TextInput, ScrollView, StyleSheet, Button, KeyboardAvoidingView, FlatList, Platform, View } from 'react-native';
+import { Text, TextInput, ScrollView, StyleSheet, Button, KeyboardAvoidingView, FlatList, Platform, View, Pressable } from 'react-native';
 
 export default function ChatPage() {
     const [text, setText] = useState('');
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const flatListRef = useRef(null);
+    const sampleChatMsg = 'sample chat message sample chat message sample chat message sample chat message'
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container} >
-            <FlatList ref={flatListRef} inverted data={messages}
+        <KeyboardAvoidingView style={styles.container} >
+            <FlatList ref={flatListRef} inverted data={sampleChatMsg}
                 renderItem={() => (
-                <View style={ styles.messageBubble }>
-                <Text style={styles.messageText}>samlple chat message</Text>
-                </View>
+                    <>
+                        <View style={ styles.messageBubbleLeft }>
+                            <Text style={styles.messageText}>{ sampleChatMsg }</Text>
+                        </View>
+                        <View style={ styles.messageBubbleRight }>
+                            <Text style={styles.messageText}>{ sampleChatMsg }</Text>
+                        </View>
+                    </>
                 )}
             />
             <View style={styles.inputContainer}>
                 <TextInput style={styles.input} value={message} onChangeText={setMessage}
                     placeholder="Type your message..." onSubmitEditing={()=>{}}
                 />
-                <Button title="Send" onPress={()=>{}} />
+                <Pressable style={styles.sendBtn}>
+                    <Text style={{ color: 'white', fontWeight: 'bold'}}>Send</Text>
+                </Pressable>
             </View>
         </KeyboardAvoidingView>          
     );
@@ -46,11 +54,30 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         marginRight: 10,
     },
-    messageBubble: {
+    messageBubbleLeft: {
+        alignSelf: 'flex-start',        
         padding: 10,
-        margin: 5,
-        borderRadius: 10,
+        marginBlock: 5,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        borderBottomRightRadius: 12,
         maxWidth: '80%',
+        backgroundColor: '#00e36a'
+    },
+    messageBubbleRight: {
+        alignSelf: 'flex-end',        
+        padding: 10,
+        marginBlock: 5,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        borderBottomLeftRadius: 12,
+        maxWidth: '80%',
+        backgroundColor: '#0084ff'
+    },
+    sendBtn: {
+        padding: 10,
+        borderRadius: 15,
+        backgroundColor: '#0084ff',
     },
     sentMessage: {
         alignSelf: 'flex-end',
@@ -61,6 +88,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#e5e5e5',
     },
     messageText: { 
-        color: '#000'
+        color: 'white'
     },
 });
