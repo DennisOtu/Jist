@@ -1,33 +1,39 @@
 //import { globalStyles } from '@/styles/global';
-import React, { useRef, useState } from 'react';
-import { Text, TextInput, ScrollView, StyleSheet, Button, KeyboardAvoidingView, FlatList, Platform, View, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { Text, TextInput, StyleSheet, KeyboardAvoidingView, FlatList, View, Pressable } from 'react-native';
 
-export default function ChatPage() {
-    const [text, setText] = useState('');
-    const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
-    const flatListRef = useRef(null);
-    const sampleChatMsg = 'sample chat message sample chat message sample chat message sample chat message'
+export default function ChatInputPage() {
+    const [inpText, setInptext] = useState('');
+    const [messages, setMessages] = useState([{ id: '00a', msg: 'Sample message' }]);
 
+    const handleSend = (inpText: string) => {
+        console.log('send button pressed');
+        if (inpText.trim() === '') return;
+        const randomInt = Math.floor(Math.random() * 1000)
+        const randomString = randomInt.toString();
+        const newMessages = [...messages, { id: randomString , msg: inpText }];
+        setMessages(newMessages);
+        console.log('input: ' + inpText);
+        console.log(newMessages);
+        setInptext('');
+    };
+
+    const Item = ({msg}:{msg: string}) => (
+        <View style={styles.messageBubbleRight}>
+        <Text style={styles.messageText}>{msg}</Text>
+        </View>
+    );    
+                            
     return (
         <KeyboardAvoidingView style={styles.container} >
-            <FlatList ref={flatListRef} inverted data={sampleChatMsg}
-                renderItem={() => (
-                    <>
-                        <View style={ styles.messageBubbleLeft }>
-                            <Text style={styles.messageText}>{ sampleChatMsg }</Text>
-                        </View>
-                        <View style={ styles.messageBubbleRight }>
-                            <Text style={styles.messageText}>{ sampleChatMsg }</Text>
-                        </View>
-                    </>
-                )}
-            />
+            <FlatList inverted data={messages} 
+              renderItem={({item}) => <Item msg={item.msg} />} keyExtractor={item => item.id}/>
+
             <View style={styles.inputContainer}>
-                <TextInput style={styles.input} value={message} onChangeText={setMessage}
-                    placeholder="Type your message..." onSubmitEditing={()=>{}}
+                <TextInput style={styles.input} value={inpText} onChangeText={ (text) => setInptext(text) } 
+                    placeholder="Type your message..."
                 />
-                <Pressable style={styles.sendBtn}>
+                <Pressable onPress={() => handleSend(inpText)} style={styles.sendBtn}>
                     <Text style={{ color: 'white', fontWeight: 'bold'}}>Send</Text>
                 </Pressable>
             </View>
@@ -90,4 +96,4 @@ const styles = StyleSheet.create({
     messageText: { 
         color: 'white'
     },
-});
+});  

@@ -5,14 +5,14 @@ import { KeyboardAvoidingView, Text, View } from 'react-native';
 
 export default function HomeScreen() {
   return (
-    <KeyboardAvoidingView>
+    <KeyboardAvoidingView style={{ flex: 1, }}>
 
       <Text style={{ marginTop: '60%', textAlign: 'center', textAlignVertical: 'center', 
-                     fontSize: 60, fontWeight: 900, color: '#007bff' }}>
+                     fontSize: 60, fontWeight: 900, color:  '#007bff'}}>
         JIST
       </Text>
 
-      <Link href='/chatView' style={{ textAlign: 'center', textAlignVertical: 'center', fontSize: 18, color: '#007bff', marginTop: 30, paddingLeft: 15 }}>
+      <Link href='/chatInputView' style={{ textAlign: 'center', textAlignVertical: 'center', fontSize: 18, color:  '#007bff', marginTop: 30, paddingLeft: 15 }}>
         Chat View
       </Link>
 
