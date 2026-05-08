@@ -12,8 +12,12 @@ export default function HomeScreen() {
         JIST
       </Text>
 
+      <Link href='/chatListView' style={{ textAlign: 'center', textAlignVertical: 'center', fontSize: 18, color:  '#007bff', marginTop: 30, paddingLeft: 15 }}>
+        Chat List
+      </Link>
+
       <Link href='/chatInputView' style={{ textAlign: 'center', textAlignVertical: 'center', fontSize: 18, color:  '#007bff', marginTop: 30, paddingLeft: 15 }}>
-        Chat View
+        Chat Input
       </Link>
 
     </KeyboardAvoidingView>

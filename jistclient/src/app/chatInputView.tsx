@@ -20,7 +20,7 @@ export default function ChatInputPage() {
 
     const Item = ({msg}:{msg: string}) => (
         <View style={styles.messageBubbleRight}>
-        <Text style={styles.messageText}>{msg}</Text>
+            <Text style={styles.messageText}>{msg}</Text>
         </View>
     );    
                             
