@@ -91,11 +91,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#cdcdcd',
         borderRadius: 12,
         margin: 2,
-        padding: 20,
     },
     chatLinkImg: {
-        width: 50,
-        height: 50,
+        width: 70,
+        height: 70,
     },
     chatLinkName: {
         fontSize: 20, 
