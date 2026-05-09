@@ -1,3 +1,4 @@
+import { Link } from 'expo-router';
 import { Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,10 +19,13 @@ export default function ChatListPage(){
     ];
      
     const Item = ({name}:{name: string}) => (
-        <Pressable style={styles.chatLink} onPress={()=>console.log(`${name}'s chat link pressed`)}>
-            <Image style={styles.chatLinkImg} source={require('./images/dpPlaceholder.png')}/>        
-            <Text style={styles.chatLinkName}>{name}</Text>
-        </Pressable> 
+        <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}` }}}  
+            onPress={() => console.log(`${name} chat link pressed`)} asChild>
+                <Pressable style={styles.chatLink}>
+                    <Image style={styles.chatLinkImg} source={{ uri: 'https://placehold.net/avatar-5.png' }}/>        
+                    <Text style={styles.chatLinkName}>{name}</Text>
+                </Pressable>
+        </Link> 
     );    
 
     return (
@@ -32,74 +36,20 @@ export default function ChatListPage(){
 }
 
 const styles = StyleSheet.create({
-    container: { 
-        flex: 1, 
-        justifyContent: 'center',
-        padding: 20
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        padding: 10,
-    },    
-    input: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 20,
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        marginRight: 10,
-    },
-    messageBubbleLeft: {
-        alignSelf: 'flex-start',        
-        padding: 10,
-        marginBlock: 5,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-        borderBottomRightRadius: 12,
-        maxWidth: '80%',
-        backgroundColor: '#00e36a'
-    },
-    messageBubbleRight: {
-        alignSelf: 'flex-end',        
-        padding: 10,
-        marginBlock: 5,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-        borderBottomLeftRadius: 12,
-        maxWidth: '80%',
-        backgroundColor: '#0084ff'
-    },
-    sendBtn: {
-        padding: 10,
-        borderRadius: 15,
-        backgroundColor: '#0084ff',
-    },
-    sentMessage: {
-        alignSelf: 'flex-end',
-        backgroundColor: '#0084ff',
-    },
-    receivedMessage: {
-        alignSelf: 'flex-start',
-        backgroundColor: '#e5e5e5',
-    },
-    messageText: { 
-        color: 'white'
-    },
     chatLink: {
         flexDirection: 'row',
-        backgroundColor: '#cdcdcd',
+        height: 80,
+        backgroundColor: '#e1e1e1af',
         borderRadius: 12,
         margin: 2,
+        padding: 5,
     },
     chatLinkImg: {
         width: 70,
         height: 70,
     },
     chatLinkName: {
-        fontSize: 20, 
-        fontWeight: 'bold',
+        fontSize: 18,
         padding: 10,
-        color: '#0084ff' 
     }
 });  

@@ -1,10 +1,19 @@
-//import { globalStyles } from '@/styles/global';
-import React, { useState } from 'react';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
+import React, { useLayoutEffect, useState } from 'react';
 import { Text, TextInput, StyleSheet, KeyboardAvoidingView, FlatList, View, Pressable } from 'react-native';
 
 export default function ChatInputPage() {
+    const { chatName } = useLocalSearchParams();
+    const navigation = useNavigation();
     const [inpText, setInptext] = useState('');
     const [messages, setMessages] = useState([{ id: '00a', msg: 'Sample message' }]);
+
+    useLayoutEffect(() => {
+        // Update the title based on dynamic data
+        navigation.setOptions({ 
+            title: chatName 
+        });
+    }, []); 
 
     const handleSend = (inpText: string) => {
         console.log('send button pressed');
@@ -45,7 +54,7 @@ const styles = StyleSheet.create({
     container: { 
         flex: 1, 
         justifyContent: 'center',
-        padding: 20
+        padding: 20,
     },
     inputContainer: {
         flexDirection: 'row',
