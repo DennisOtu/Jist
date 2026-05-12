@@ -9,24 +9,27 @@ export default function HomeScreen() {
   const handleSignIn = async () => {
     console.log(`User Name: ${userName}`);
     console.log(`User Number: ${userNum}`);
-    const formData = new FormData();
-    formData.append(userName, userNum);
+    //const formData = new FormData();
+    //formData.append(userName, userNum);
 
     try {
-      const res = await fetch('http://localhost:5000/api/v1/auth/signup', {
+      const res = await fetch('http://192.168.0.141:5000/api/v1/auth/signup', {
         method:  'POST',
-        body: formData,
-				headers: {'Content-Type': 'multipart/form-data'},
-        credentials: 'include'
+				headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name : userName,
+          phone : userNum,
+        }),
+        //credentials: 'include'
       })
       
       const data = await res;
     
       if (data) {
-        console.log(`${data.json()}`)
+        console.log(data);
       }
     } catch (error) {
-        console.log(error)
+        console.log('Error: ' + error);
     }
     setUserName('');
     setUserNum('');
