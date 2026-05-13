@@ -73,6 +73,16 @@ export const verifyUser = (req, res, next)=>{
     }
 }
 
+export const getAll = async (req, res) => {
+    try {
+        const allUsers = await User.find({});
+        res.status(200).json(allUsers);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
+
 export const logout = (req, res) => {
     res.cookie('jwt',"",{maxAge:1});
     res.status(200).json({logout: true});
