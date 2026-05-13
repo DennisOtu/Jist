@@ -15,11 +15,7 @@ const userSchema = new mongoose.Schema({
         maxLength: [10, 'Phone number must be 10 digits long'],
         // Ensures all characters are numbers
         match: [/^\d{10}$/, 'Phone number must contain only numerical values']        
-    },
-    socketID: {
-        type: String,
-        default: null
-    },
+    }
 })
 
 userSchema.statics.login = async function (name, phone){

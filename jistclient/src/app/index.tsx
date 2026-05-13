@@ -6,14 +6,12 @@ export default function HomeScreen() {
   const [ userName, setUserName] = useState('');
   const [ userNum, setUserNum] = useState('');
 
-  const handleSignIn = async () => {
+  const handleSignUp = async () => {
     console.log(`User Name: ${userName}`);
     console.log(`User Number: ${userNum}`);
-    //const formData = new FormData();
-    //formData.append(userName, userNum);
 
     try {
-      const res = await fetch('http://192.168.0.141:5000/api/v1/auth/signup', {
+      const res = await fetch('http://192.168.0.100:5000/api/v1/auth/signup', {
         method:  'POST',
 				headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -23,7 +21,7 @@ export default function HomeScreen() {
         //credentials: 'include'
       })
       
-      const data = await res;
+      const data = res;
     
       if (data) {
         console.log(data);
@@ -42,8 +40,8 @@ export default function HomeScreen() {
       </Text>
       <TextInput style={styles.singInInpt} value={userName} onChangeText={(text)=>{setUserName(text)}} placeholder='Name'/>
       <TextInput style={styles.singInInpt} value={userNum} onChangeText={(text)=>{setUserNum(text)}} placeholder='Number'/>
-      <Link href='/chatListView' style={styles.signInLink} onPress={handleSignIn}>
-        Sign In
+      <Link href='/chatListView' style={styles.signInLink} onPress={handleSignUp}>
+        Sign Up
       </Link>
     </View>
   );
