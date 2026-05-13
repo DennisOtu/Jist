@@ -33,9 +33,11 @@ export const signup = async (req, res) => {
 	    // expiration date calculated in miliseconds
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
         res.status(201).json({ user });
+        console.log(`User signup: ${user.name}`)
     } catch (error) {
         let errors = alertError(error);
         res.status(400).json({ errors });
+        console.log(error)
     }
 }
 
@@ -46,9 +48,11 @@ export const login = async (req, res) => {
         const token = createJWT(user._id);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
         res.status(201).json({ user });
+        console.log(`User login: ${user.name}`)
     } catch (error) {
         let errors = alertError(error);
         res.status(400).json({ errors });
+        console.log(error)
     }
 }
 
