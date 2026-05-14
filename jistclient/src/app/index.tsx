@@ -1,17 +1,21 @@
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Text, TextInput, View, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { Text, TextInput, View, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+
 
 export default function HomeScreen() {
   const [ userName, setUserName] = useState('');
   const [ userNum, setUserNum] = useState('');
+
+  const router = useRouter();
 
   const handleSignUp = async () => {
     console.log(`User Name: ${userName}`);
     console.log(`User Number: ${userNum}`);
 
     try {
-      const res = await fetch('http://192.168.0.100:5000/api/v1/auth/signup', {
+      const res = await fetch('http://192.168.0.141:5000/api/v1/auth/signup', {
         method:  'POST',
 				headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -24,8 +28,15 @@ export default function HomeScreen() {
       const data = res;
     
       if (data) {
-        console.log(data);
+        await SecureStore.setItemAsync('user', JSON.stringify(data));
+        console.log(JSON.stringify(data));
       }
+
+      const userInfo = await SecureStore.getItemAsync('user');
+      if (userInfo !== null) {
+        router.navigate('/chatListView')          
+      }
+
     } catch (error) {
         console.log('Error: ' + error);
     }
@@ -38,7 +49,7 @@ export default function HomeScreen() {
     console.log(`User Number: ${userNum}`);
 
     try {
-      const res = await fetch('http://192.168.0.100:5000/api/v1/auth/login', {
+      const res = await fetch('http://192.168.0.141:5000/api/v1/auth/login', {
         method:  'POST',
 				headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -51,8 +62,15 @@ export default function HomeScreen() {
       const data = res;
     
       if (data) {
-        console.log(data);
+        await SecureStore.setItemAsync('user', JSON.stringify(data));
+        console.log(JSON.stringify(data));
       }
+      
+      const userInfo = await SecureStore.getItemAsync('user');
+      if (userInfo !== null) {
+        router.navigate('/chatListView')          
+      }
+
     } catch (error) {
         console.log('Error: ' + error);
     }
@@ -68,13 +86,13 @@ export default function HomeScreen() {
       <TextInput style={styles.usrAuthInpt} value={userName} onChangeText={(text)=>{setUserName(text)}} placeholder='Name'/>
       <TextInput style={styles.usrAuthInpt} value={userNum} onChangeText={(text)=>{setUserNum(text)}} placeholder='Number'/>
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-        <Link href='/chatListView' style={styles.usrAuthLink} onPress={handleSignUp}>
-          Sign Up
-        </Link>
-
-        <Link href='/chatListView' style={styles.usrAuthLink} onPress={handleLogIn}>
-          Log In
-        </Link>
+        <Pressable onPress={handleLogIn}>
+          <Text style={styles.usrAuthLink}>Sign In</Text>
+        </Pressable>
+        <Text style={{ fontSize: 18, fontStyle: 'italic', color: 'white', marginTop: 20, textAlign: 'center', marginInline: 20 }}>New to Jist?</Text>
+        <Pressable onPress={handleSignUp}>
+          <Text style={styles.usrAuthLink}>Sign Up</Text>
+        </Pressable>
       </View>
 
     </KeyboardAvoidingView>
@@ -97,7 +115,7 @@ const styles = StyleSheet.create ({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    color:  'white',
+    color:  '#fff',
     marginTop: 20,
     marginInline: 20,
   }

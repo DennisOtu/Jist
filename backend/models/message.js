@@ -1,22 +1,24 @@
 import mongoose from "mongoose";
+import User from './user.js';
+import Room from './room.js';
 
 const messageSchema = new mongoose.Schema({
     text: {
         type: String,
         required: true
     },
-    senderId: { 
+    sender: { 
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: User,
         required: true
     },
-    recvrId: { 
+    recipient: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User',
+        ref: User,
     },
     roomId: {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Room',
+        ref: Room,
         text: { type: String, required: true },
         createdAt: { type: Date, default: Date.now}
     }},

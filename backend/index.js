@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import cors from 'cors'
+import messageRoutes from './routes/messageRoutes.js';
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(cookieParser()); 
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/messages', messageRoutes);
 //app.use("*", (req, res) => res.status(404).json({ error: "page not found" }))
 
 mongoose.connect(process.env.MONGODB_URI, { dbName: 'jist' })
