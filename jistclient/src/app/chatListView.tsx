@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 
 const fetchUsers = async () => {
-    const response = await fetch('http://192.168.0.141:5000/api/v1/auth/allusers');
+    const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers');
     if (!response.ok) throw new Error('Unable to fetch users');
     return response.json();
 };
@@ -17,7 +17,7 @@ export default function ChatListPage(){
 
     const Item = ({name}:{name: string}) => (
         <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}` }}}  
-            onPress={() => console.log(`${name} chat link pressed`)} asChild>
+            onPress={() => console.log(`${name} chat link pressed`)} asChild >
                 <Pressable style={styles.chatLink}>
                     <Image style={styles.chatLinkImg} source={{ uri: 'https://placehold.net/avatar-5.png' }}/>        
                     <Text style={styles.chatLinkName}>{name}</Text>
@@ -26,7 +26,7 @@ export default function ChatListPage(){
     );    
 
     if (isPending) return <Text>Loading...</Text>;
-    if (error) return <Text>Error: {error.message}</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;	
 
     return (
         <SafeAreaView>
