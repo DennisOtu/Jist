@@ -32,10 +32,12 @@ export const signup = async (req, res) => {
         // create a jwt cookie that expires after 1 day
 	    // expiration date calculated in miliseconds
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
-        res.status(201).json({ user });
+        res.status(201).json({ user, token });
+        console.log(`User signup: ${user.name}`)
     } catch (error) {
         let errors = alertError(error);
         res.status(400).json({ errors });
+        console.log(error)
     }
 }
 
@@ -45,10 +47,12 @@ export const login = async (req, res) => {
         const user = await User.login(name, phone );
         const token = createJWT(user._id);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 })
-        res.status(201).json({ user });
+        res.status(201).json({ user, token });
+        console.log(`User login: ${user.name}`)
     } catch (error) {
         let errors = alertError(error);
         res.status(400).json({ errors });
+        console.log(error)
     }
 }
 
@@ -68,6 +72,16 @@ export const verifyUser = (req, res, next)=>{
         next();
     }
 }
+
+export const getAll = async (req, res) => {
+    try {
+        const allUsers = await User.find({});
+        res.status(200).json(allUsers);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
 
 export const logout = (req, res) => {
     res.cookie('jwt',"",{maxAge:1});

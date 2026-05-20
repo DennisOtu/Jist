@@ -1,26 +1,23 @@
 import { Link } from 'expo-router';
 import { Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useQuery } from '@tanstack/react-query';
+
+const fetchUsers = async () => {
+    const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers');
+    if (!response.ok) throw new Error('Unable to fetch users');
+    return response.json();
+};
 
 export default function ChatListPage(){
-    const chats = [
-                {id: '001', name: 'Nana'},
-                {id: '002', name: 'Ama'},
-                {id: '003', name: 'Gym'},
-                {id: '004', name: 'Abbi'},
-                {id: '005', name: 'Freda'},
-                {id: '006', name: 'Patience'},
-                {id: '007', name: 'Kweku'},
-                {id: '008', name: 'John'},  
-                {id: '009', name: 'Dennis'},
-                {id: '010', name: 'Family Group'},
-                {id: '011', name: 'David'},
-                {id: '012', name: 'Kwame'},              
-    ];
-     
+    const { data: users, isPending, error } = useQuery({
+        queryKey: ['users'], // Unique key for caching
+        queryFn: fetchUsers,
+    });
+
     const Item = ({name}:{name: string}) => (
         <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}` }}}  
-            onPress={() => console.log(`${name} chat link pressed`)} asChild>
+            onPress={() => console.log(`${name} chat link pressed`)} asChild >
                 <Pressable style={styles.chatLink}>
                     <Image style={styles.chatLinkImg} source={{ uri: 'https://placehold.net/avatar-5.png' }}/>        
                     <Text style={styles.chatLinkName}>{name}</Text>
@@ -28,9 +25,12 @@ export default function ChatListPage(){
         </Link> 
     );    
 
+    if (isPending) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;	
+
     return (
         <SafeAreaView>
-            <FlatList data={chats} renderItem={({item}) => <Item  name={item.name} />} keyExtractor={item => item.id}/>
+            <FlatList data={users} renderItem={({item}) => <Item  name={item.name} />} keyExtractor={item => item.id}/>
         </SafeAreaView>          
     );
 }
