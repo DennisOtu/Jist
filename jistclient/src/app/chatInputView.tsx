@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useLayoutEffect, useState } from 'react';
 import { Text, TextInput, StyleSheet, KeyboardAvoidingView, FlatList, View, Pressable } from 'react-native';
+import socket from '../utils/socket.js';
 
 export default function ChatInputPage() {
     const { chatName } = useLocalSearchParams();
@@ -15,6 +16,15 @@ export default function ChatInputPage() {
         });
     }, []); 
 
+    socket.on('chat message', (data) => {
+        console.log('message: ' + data)
+    });
+
+    socket.on('socketID',(ID) => {
+        console.log(`Socket Id: ${ID}`)
+        //sessionStorage.setItem('socketID', ID)
+    })
+    
     const handleSend = (inpText: string) => {
         console.log('send button pressed');
         if (inpText.trim() === '') return;

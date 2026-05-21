@@ -3,17 +3,18 @@ import { useState } from 'react';
 import { Text, TextInput, View, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
 import NitroCookies from 'react-native-nitro-cookies'
 
-
 export default function HomeScreen() {
+  const srvIP = '192.168.0.101'
   const [ userName, setUserName] = useState('');
   const [ userNum, setUserNum] = useState('');
+
 
   const handleSignUp = async () => {
     console.log(`Name Input: ${userName}`);
     console.log(`Number Input: ${userNum}`);
 
     try {
-      const res = await fetch('http://192.168.0.100:5000/api/v1/auth/signup', {
+      const res = await fetch(`http://${srvIP}:5000/api/v1/auth/signup`, {
         method:  'POST',
 				headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -21,16 +22,18 @@ export default function HomeScreen() {
           phone : userNum,
         }),
         credentials: 'include'
-      })
+      }).then(response=> response.json()).then(data=>{return data})
+
       if (res) {
-        const cookies = await NitroCookies.get('https://192.168.0.100:5000');
-        await NitroCookies.set('https://192.168.0.100:5000', {
+        console.log(JSON.stringify(res));
+        const cookies = await NitroCookies.get(`https://${srvIP}:5000`);
+        await NitroCookies.set(`https://${srvIP}:5000`, {
           name: "authToken",
           value: cookies.jwt.value,
           path: "/",
           secure: true,		  
         });      
-        console.log(JSON.stringify(cookies.jwt.value, null, 2));
+        //console.log(JSON.stringify(cookies.jwt.value, null, 2));
       }
     } catch (error) {
         console.log('Error: ' + error);
@@ -44,7 +47,7 @@ export default function HomeScreen() {
     console.log(`Number Input: ${userNum}`);
 
     try {
-      const res = await fetch('http://192.168.0.100:5000/api/v1/auth/login', {
+      const res = await fetch(`http://${srvIP}:5000/api/v1/auth/login`, {
         method:  'POST',
 				headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -52,10 +55,12 @@ export default function HomeScreen() {
           phone : userNum,
         }),
         credentials: 'include'
-      })
+      }).then(response=> response.json()).then(data=>{return data})
+
       if (res) {
-        const cookies = await NitroCookies.get('https://192.168.0.100:5000');
-        await NitroCookies.set('https://192.168.0.100:5000', {
+        console.log(JSON.stringify(res));
+        const cookies = await NitroCookies.get(`https://${srvIP}:5000`);
+        await NitroCookies.set(`https://${srvIP}:5000`, {
           name: "authToken",
           value: JSON.stringify(cookies.jwt.value, null, 2),
           path: "/",
