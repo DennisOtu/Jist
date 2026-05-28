@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import cors from 'cors'
 import messageRoutes from './routes/messageRoutes.js';
+import roomRoutes from './routes/roomRoutes.js';
 
 dotenv.config()
 
@@ -18,14 +19,18 @@ const server = createServer(app);
 const io = new Server(server);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-
 app.use(cors());
 app.use(express.static(join(__dirname, 'public')))
 app.use(express.json());
-app.use(cookieParser()); 
-
+app.use(cookieParser());
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/messages', messageRoutes);
+app.use('/api/v1/message', messageRoutes);
+app.use('/api/v1/room', roomRoutes);
+
 //app.use("*", (req, res) => res.status(404).json({ error: "page not found" }))
 
 mongoose.connect(process.env.MONGODB_URI, { dbName: 'jist' })
@@ -33,23 +38,28 @@ mongoose.connect(process.env.MONGODB_URI, { dbName: 'jist' })
   .catch(err => console.log(err)
 )
 
+/*
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'index.html'));
 });
+*/
 
 io.on('connection', (socket) => {
-    socket.emit('socketID', socket.id);
-    console.log(`${socket.id} Connected`);
+  socket.emit('socketID', socket.id);
+  console.log(`${socket.id} Connected`);
 
-    socket.on('chat message', (data) => {
-        console.log(`Message from ${data.name}: ${data.message}`);
-        //io.emit('chat message', `${socket.id} : ${data}`);
-        socket.broadcast.emit('chat message', data)
-    });
+  socket.on('userConnected', (usr)=>{
+    socket.join(usr);
+  });
 
-    socket.on('disconnect', () => {
-        console.log(`${socket.id} Disconnected`);
-    });
+  socket.on('chat message', (newMsg) => {
+    console.log(`Message from ${newMsg.sender}: ${newMsg.text}`);
+    io.in(newMsg.receiver).emit('chat emssage', newMsg);        
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`${socket.id} Disconnected`);
+  });
 });
 
 server.listen(PORT, '0.0.0.0', () => {
