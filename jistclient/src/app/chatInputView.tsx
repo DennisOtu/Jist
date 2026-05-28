@@ -5,12 +5,11 @@ import socket from '../utils/socket.js';
 import { useQuery } from '@tanstack/react-query';
 
 export default function ChatInputPage() {
-    const srvIP = '192.168.0.141'
+    const srvIP = '192.168.0.100'
     const { chatName, chatId, userName, userId } = useLocalSearchParams();
     const navigation = useNavigation();
-    const [inputMsg, setInputMsg] = useState('');
+    const [ inputMsg, setInputMsg ] = useState('');
     const [ msgIds, setMsgIds ] = useState(['']);
-    //const [ msgThread, setMsgThread ] = useState([]);
 
     const fetchMsgThread = async () => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages`, {
@@ -39,14 +38,10 @@ export default function ChatInputPage() {
 
 
     const { data: msgThread, isPending, error } = useQuery({
-        queryKey: ['msgThread'], // Unique key for caching
+        queryKey: ['msgThread', msgIds], // Unique key for caching. Add state variable to array to trigger refetch on variable change
         queryFn: fetchMsgThread,
     });
-/*
-    useEffect(()=>{
-        fetchMsgThread()
-    },[msgIds]);
-*/
+
     const addMsgToRoomDb = async (roomName: any, messageId: any, userId: any) => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages/add`,{
             method: 'POST',
@@ -62,7 +57,7 @@ export default function ChatInputPage() {
     }
 
     socket.on('chat message', (newMsg) => {
-        console.log('message: ' + newMsg)
+        console.log('message: ' + newMsg);
         const newMsgIds = [...msgIds, newMsg._id ];
         setMsgIds(newMsgIds);
     });
@@ -87,12 +82,10 @@ export default function ChatInputPage() {
                 }),
                 credentials: 'include'
             }).then(response=>response.json()); 
-			//if (!res.ok) throw new Error('Unable to send message');			
-			//const newMsg = JSON.parse(res);
 			const newMsgIds = [...msgIds, res._id ];
 			setMsgIds(newMsgIds);
 			socket.emit('chat message', res);
-			addMsgToRoomDb(chatId, res._id)
+			addMsgToRoomDb(chatId, res._id, userId)
 			setInputMsg('');
         } catch (error) {
             console.log(error);

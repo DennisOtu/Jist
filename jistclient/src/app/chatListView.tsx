@@ -6,7 +6,7 @@ import { useLocalSearchParams } from 'expo-router';
 import socket from '../utils/socket.js';
 
 const fetchUsers = async () => {
-    const response = await fetch('http://192.168.0.141:5000/api/v1/auth/allusers');
+    const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers');
     if (!response.ok) throw new Error('Unable to fetch users');
     return response.json();
 };

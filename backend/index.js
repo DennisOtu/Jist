@@ -50,6 +50,8 @@ io.on('connection', (socket) => {
 
   socket.on('userConnected', (usr)=>{
     socket.join(usr);
+    console.log(`${usr} joined room ${usr}`);
+    
   });
 
   socket.on('chat message', (newMsg) => {
