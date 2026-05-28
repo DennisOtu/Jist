@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
 
   socket.on('chat message', (newMsg) => {
     console.log(`Message from ${newMsg.sender}: ${newMsg.text}`);
-    io.in(newMsg.receiver).emit('chat emssage', newMsg);        
+    socket.to(newMsg.receiver).to(newMsg.sender).emit('chat emssage', newMsg);        
   });
 
   socket.on('disconnect', () => {

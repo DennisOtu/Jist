@@ -47,13 +47,14 @@ export default function ChatInputPage() {
         fetchMsgThread()
     },[msgIds]);
 */
-    const addMsgToRoomDb = async (roomName: any, messageId: any) => {
+    const addMsgToRoomDb = async (roomName: any, messageId: any, userId: any) => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages/add`,{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 name: roomName,
-                messages: messageId
+                messages: messageId,
+				sender: userId,
             })
         });
 		if (!res.ok) throw new Error('Unable to add message to room db');
@@ -113,7 +114,7 @@ export default function ChatInputPage() {
  
     return (
         <KeyboardAvoidingView style={styles.container} >
-            <FlatList inverted data={msgThread} 
+            <FlatList inverted={true} data={msgThread} 
               renderItem={({item}) => <Item msg={item.text} />} keyExtractor={item => item._id}
             />
             <View style={styles.inputContainer}>
@@ -132,7 +133,8 @@ const styles = StyleSheet.create({
     container: { 
         flex: 1, 
         justifyContent: 'center',
-        padding: 20,
+        paddingInline: 20,
+		
     },
     inputContainer: {
         flexDirection: 'row',
@@ -158,6 +160,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#00e36a'
     },
     messageBubbleRight: {
+		flex: 1,
         alignSelf: 'flex-end',        
         padding: 10,
         marginBlock: 5,
