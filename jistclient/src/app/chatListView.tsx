@@ -2,21 +2,34 @@ import { Link } from 'expo-router';
 import { Text, FlatList, StyleSheet, Image, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
+import { useLocalSearchParams } from 'expo-router';
+import socket from '../utils/socket.js';
+import { useEffect } from 'react';
 
 const fetchUsers = async () => {
-    const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers');
+    const response = await fetch('http://192.168.0.141:5000/api/v1/auth/allusers');
     if (!response.ok) throw new Error('Unable to fetch users');
     return response.json();
 };
 
 export default function ChatListPage(){
+	const { userName, userId } = useLocalSearchParams();
+    
     const { data: users, isPending, error } = useQuery({
         queryKey: ['users'], // Unique key for caching
         queryFn: fetchUsers,
     });
 
-    const Item = ({name}:{name: string}) => (
-        <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}` }}}  
+	socket.on('connect', connectUser);
+
+    function connectUser () {  
+        const usr = userId 
+        if (!usr) return;
+        socket.emit('userConnected', usr);
+    }
+
+    const Item = ({ name, id }: { name: string; id: string; }) => (
+        <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}`, chatId: `${id}`, userName: `${userName}`, userId: `${userId}` }}}  
             onPress={() => console.log(`${name} chat link pressed`)} asChild >
                 <Pressable style={styles.chatLink}>
                     <Image style={styles.chatLinkImg} source={{ uri: 'https://placehold.net/avatar-5.png' }}/>        
@@ -30,7 +43,7 @@ export default function ChatListPage(){
 
     return (
         <SafeAreaView>
-            <FlatList data={users} renderItem={({item}) => <Item  name={item.name} />} keyExtractor={item => item.id}/>
+            <FlatList data={users} renderItem={({item}) => <Item  name={item.name} id={item._id} />} keyExtractor={item => item.id}/>
         </SafeAreaView>          
     );
 }

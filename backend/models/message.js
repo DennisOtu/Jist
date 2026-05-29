@@ -12,17 +12,13 @@ const messageSchema = new mongoose.Schema({
         ref: User,
         required: true
     },
-    recipient: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: User,
-    },
-    roomId: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: Room,
-        text: { type: String, required: true },
-        createdAt: { type: Date, default: Date.now}
+    receiver: { 
+        type: String, 
+        required: true,
     }},
-    { timestamps: true })
-const Message = mongoose.model('message', messageSchema);
+    { timestamps: true }
+)
+
+const Message = mongoose.models.message || mongoose.model('message', messageSchema);
 
 export default Message

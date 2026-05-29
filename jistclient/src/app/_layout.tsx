@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from "expo-router";
 import { useEffect, useState } from 'react';
 import NitroCookies from 'react-native-nitro-cookies';
-import { Button } from 'react-native';
 
 const queryClient = new QueryClient();
 
@@ -11,7 +10,7 @@ export default function RootLayout() {
   const [ userInfo, setUserInfo ] = useState<object | null>(null);
 
   const getUser = async () => {
-    const user = await NitroCookies.get('https://192.168.0.100:5000');
+    const user = await NitroCookies.get('https://192.168.0.101:5000');
     if(user){
       setUserInfo(user);
 	  setIsLoggedIn(true);

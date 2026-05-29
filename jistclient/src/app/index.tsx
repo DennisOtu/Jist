@@ -1,79 +1,90 @@
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Text, TextInput, View, StyleSheet, KeyboardAvoidingView, Pressable } from 'react-native';
 import NitroCookies from 'react-native-nitro-cookies'
 
-
 export default function HomeScreen() {
-  const [ userName, setUserName] = useState('');
-  const [ userNum, setUserNum] = useState('');
+  const srvIP = '192.168.0.141'
+  const [ nameInput, setNameInput] = useState('');
+  const [ numInput, setNumInput] = useState('');
+  const router = useRouter();
 
   const handleSignUp = async () => {
-    console.log(`Name Input: ${userName}`);
-    console.log(`Number Input: ${userNum}`);
+    console.log(`Name Input: ${nameInput}`);
+    console.log(`Number Input: ${numInput}`);
 
     try {
-      const res = await fetch('http://192.168.0.100:5000/api/v1/auth/signup', {
+      const res = await fetch(`http://${srvIP}:5000/api/v1/auth/signup`, {
         method:  'POST',
 				headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          name : userName,
-          phone : userNum,
+          name : nameInput,
+          phone : numInput,
         }),
         credentials: 'include'
-      })
+      }).then(response=> response.json()).then(data=>{return data})
+
       if (res) {
-        const cookies = await NitroCookies.get('https://192.168.0.100:5000');
-        await NitroCookies.set('https://192.168.0.100:5000', {
+        console.log(JSON.stringify(res));
+        const cookies = await NitroCookies.get(`https://${srvIP}:5000`);
+        await NitroCookies.set(`https://${srvIP}:5000`, {
           name: "authToken",
           value: cookies.jwt.value,
           path: "/",
           secure: true,		  
         });      
-        console.log(JSON.stringify(cookies.jwt.value, null, 2));
+        router.push({
+          pathname: "/chatListView",
+          params: { userId: res.user._id, userName: res.user.name }
+        })   
       }
     } catch (error) {
         console.log('Error: ' + error);
     }
-    setUserName('');
-    setUserNum('');
+    setNameInput('');
+    setNumInput('');
   }
 
   const handleLogIn = async () => {
-    console.log(`Name Input: ${userName}`);
-    console.log(`Number Input: ${userNum}`);
+    console.log(`Name Input: ${nameInput}`);
+    console.log(`Number Input: ${numInput}`);
 
     try {
-      const res = await fetch('http://192.168.0.100:5000/api/v1/auth/login', {
+      const res = await fetch(`http://${srvIP}:5000/api/v1/auth/login`, {
         method:  'POST',
 				headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          name : userName,
-          phone : userNum,
+          name : nameInput,
+          phone : numInput,
         }),
         credentials: 'include'
-      })
+      }).then(response=> response.json()).then(data=>{return data})
+
       if (res) {
-        const cookies = await NitroCookies.get('https://192.168.0.100:5000');
-        await NitroCookies.set('https://192.168.0.100:5000', {
+        console.log(JSON.stringify(res));
+        const cookies = await NitroCookies.get(`https://${srvIP}:5000`);
+        await NitroCookies.set(`https://${srvIP}:5000`, {
           name: "authToken",
           value: JSON.stringify(cookies.jwt.value, null, 2),
           path: "/",
           secure: true,		  
-        });      
-        //console.log(JSON.stringify(cookies.jwt.value, null, 2));
+        });  
+        router.push({
+          pathname: "/chatListView",
+          params: { userId: res.user._id, userName: res.user.name }
+        })            
       }
     } catch (error) {
         console.log('Error: ' + error);
     }
-    setUserName('');
-    setUserNum('');
+    setNameInput('');
+    setNumInput('');
   }
 
   const handleLogOut = async () => {
     await NitroCookies.clearAll();
-    setUserName('');
-    setUserNum('');
+    setNameInput('');
+    setNumInput('');
 	  console.log('User SignOut Successfull');
   }
 
@@ -82,25 +93,21 @@ export default function HomeScreen() {
       <Text style={{ textAlign: 'center', fontSize: 60, fontWeight: 900, color:  'white'}}>
         JIST
       </Text>
-      <TextInput style={styles.usrAuthInpt} value={userName} onChangeText={(text)=>{setUserName(text)}} placeholder='Name'/>
-      <TextInput style={styles.usrAuthInpt} value={userNum} onChangeText={(text)=>{setUserNum(text)}} placeholder='Number'/>
+      <TextInput style={styles.usrAuthInpt} value={nameInput} onChangeText={(text)=>{setNameInput(text)}} placeholder='Name'/>
+      <TextInput style={styles.usrAuthInpt} value={numInput} onChangeText={(text)=>{setNumInput(text)}} placeholder='Number'/>
 
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
 
-        <Link href={'/chatListView'} asChild>
-          <Pressable onPress={handleLogIn}>
-            <Text style={styles.usrAuthLink}>Sign In</Text>
-          </Pressable>
-        </Link>
-
+        <Pressable onPress={handleLogIn}>
+          <Text style={styles.usrAuthLink}>Sign In</Text>
+        </Pressable>
+        
         <Text style={{ fontSize: 18, fontStyle: 'italic', color: 'white', marginTop: 20, textAlign: 'center', marginInline: 20 }}>New to Jist?</Text>
         
-        <Link href={'/chatListView'} asChild>
-          <Pressable onPress={handleSignUp}>
-            <Text style={styles.usrAuthLink}>Sign Up</Text>
-          </Pressable>
-        </Link>        
-            
+        <Pressable onPress={handleSignUp}>
+          <Text style={styles.usrAuthLink}>Sign Up</Text>
+        </Pressable>
+                
       </View>
 
       <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
