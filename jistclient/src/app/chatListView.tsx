@@ -4,9 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import socket from '../utils/socket.js';
+import { useEffect } from 'react';
 
 const fetchUsers = async () => {
-    const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers');
+    const response = await fetch('http://192.168.0.141:5000/api/v1/auth/allusers');
     if (!response.ok) throw new Error('Unable to fetch users');
     return response.json();
 };
@@ -19,13 +20,13 @@ export default function ChatListPage(){
         queryFn: fetchUsers,
     });
 
+	socket.on('connect', connectUser);
+
     function connectUser () {  
         const usr = userId 
         if (!usr) return;
         socket.emit('userConnected', usr);
     }
-
-    socket.on('connect', connectUser);
 
     const Item = ({ name, id }: { name: string; id: string; }) => (
         <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}`, chatId: `${id}`, userName: `${userName}`, userId: `${userId}` }}}  

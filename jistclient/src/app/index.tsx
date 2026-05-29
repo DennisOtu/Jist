@@ -4,7 +4,7 @@ import { Text, TextInput, View, StyleSheet, KeyboardAvoidingView, Pressable } fr
 import NitroCookies from 'react-native-nitro-cookies'
 
 export default function HomeScreen() {
-  const srvIP = '192.168.0.100'
+  const srvIP = '192.168.0.141'
   const [ nameInput, setNameInput] = useState('');
   const [ numInput, setNumInput] = useState('');
   const router = useRouter();

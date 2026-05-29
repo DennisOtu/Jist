@@ -1,15 +1,18 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { Text, TextInput, StyleSheet, KeyboardAvoidingView, FlatList, View, Pressable } from 'react-native';
 import socket from '../utils/socket.js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 export default function ChatInputPage() {
-    const srvIP = '192.168.0.100'
+    const srvIP = '192.168.0.141'
     const { chatName, chatId, userName, userId } = useLocalSearchParams();
     const navigation = useNavigation();
     const [ inputMsg, setInputMsg ] = useState('');
     const [ msgIds, setMsgIds ] = useState(['']);
+	const queryClient = useQueryClient();
 
     const fetchMsgThread = async () => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages`, {
@@ -24,6 +27,24 @@ export default function ChatInputPage() {
 		//console.log(res.json());
         return res.json();            
     }    
+	
+    socket.on('chat message', (newMsg) => {
+        console.log('message: ' + newMsg.text);
+        const newMsgIds = [...msgIds, newMsg._id ];
+        setMsgIds(newMsgIds);
+    });
+	
+    socket.on('socketID',(ID) => {
+        console.log(`Socket Id: ${ID}`)
+        //sessionStorage.setItem('socketID', ID)
+    });
+	
+	  useFocusEffect(
+		useCallback(() => {
+		  // Clear all active and inactive queries
+		queryClient.removeQueries({ msgThread, exact: true });
+		}, [queryClient, msgThread])
+	  );	
 
     useLayoutEffect(() => {
         // Update the title based on dynamic data
@@ -40,6 +61,7 @@ export default function ChatInputPage() {
     const { data: msgThread, isPending, error } = useQuery({
         queryKey: ['msgThread', msgIds], // Unique key for caching. Add state variable to array to trigger refetch on variable change
         queryFn: fetchMsgThread,
+		refetchOnMount: "always",
     });
 
     const addMsgToRoomDb = async (roomName: any, messageId: any, userId: any) => {
@@ -55,17 +77,6 @@ export default function ChatInputPage() {
 		if (!res.ok) throw new Error('Unable to add message to room db');
         return await res.json();
     }
-
-    socket.on('chat message', (newMsg) => {
-        console.log('message: ' + newMsg);
-        const newMsgIds = [...msgIds, newMsg._id ];
-        setMsgIds(newMsgIds);
-    });
-
-    socket.on('socketID',(ID) => {
-        console.log(`Socket Id: ${ID}`)
-        //sessionStorage.setItem('socketID', ID)
-    })
     
     const handleSend = async (inputMsg: string) => {
         console.log('send button pressed');

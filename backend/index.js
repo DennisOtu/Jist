@@ -56,7 +56,10 @@ io.on('connection', (socket) => {
 
   socket.on('chat message', (newMsg) => {
     console.log(`Message from ${newMsg.sender}: ${newMsg.text}`);
-    socket.to(newMsg.receiver).to(newMsg.sender).emit('chat emssage', newMsg);        
+	socket.join(newMsg.receiver);
+	console.log(`${newMsg.sender} joined room ${newMsg.receiver}`);
+	io.to(newMsg.receiver).emit('chat message', newMsg);
+	//socket.emit('chat message', newMsg);
   });
 
   socket.on('disconnect', () => {
