@@ -105,8 +105,8 @@ export default function ChatInputPage() {
         }        
     };
 
-    const Item = ({msg}:{msg: string}) => (
-        <View style={styles.messageBubbleRight}>
+    const ListItem = ({msg, sentBy}:{msg: string; sentBy: string}) => (
+        <View style={sentBy === userId ? styles.messageBubbleRight : styles.messageBubbleLeft}>
             <Text style={styles.messageText}>{msg}</Text>
         </View>
     );  
@@ -121,7 +121,7 @@ export default function ChatInputPage() {
     return (
         <KeyboardAvoidingView style={styles.container} >
             <FlatList inverted={true} data={msgThread} 
-              renderItem={({item}) => <Item msg={item.text} />} keyExtractor={item => item.createdAt}
+              renderItem={({item}) => <ListItem msg={item.text} sentBy={item.sender} />} keyExtractor={item => item._id.toString()}
             />
             <View style={styles.inputContainer}>
                 <TextInput style={styles.input} value={inputMsg} onChangeText={ (text) => setInputMsg(text) } 
