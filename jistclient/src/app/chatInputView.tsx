@@ -1,50 +1,42 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Text, TextInput, StyleSheet, KeyboardAvoidingView, FlatList, View, Pressable } from 'react-native';
 import socket from '../utils/socket.js';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useFocusEffect } from '@react-navigation/native';
-
+import { useQuery } from '@tanstack/react-query';
 
 export default function ChatInputPage() {
-    const srvIP = '192.168.0.141'
+    const srvIP = '192.168.0.100'
     const { chatName, chatId, userName, userId } = useLocalSearchParams();
     const navigation = useNavigation();
     const [ inputMsg, setInputMsg ] = useState('');
-    const [ msgIds, setMsgIds ] = useState(['']);
-	const queryClient = useQueryClient();
+    const [ msgIds, setMsgIds ] = useState(['']); 
+    const roomId = `${userId}${chatId}`;
 
-    const fetchMsgThread = async () => {
+	const fetchMsgThread = async () => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                name: chatId
+                sender: userId,
+                receiver: chatId
             }),
             credentials: 'include',
         });
         if (!res.ok) throw new Error('Unable to fetch message thread');
 		//console.log(res.json());
-        return res.json();            
+        return res.json();
     }    
 	
     socket.on('chat message', (newMsg) => {
-        console.log('message: ' + newMsg.text);
+        console.log(`Message from ${newMsg.sender} : ${newMsg.text}`);
         const newMsgIds = [...msgIds, newMsg._id ];
         setMsgIds(newMsgIds);
     });
 	
     socket.on('socketID',(ID) => {
-        console.log(`Socket Id: ${ID}`)
+        console.log(`My Socket Id: ${ID}`)
         //sessionStorage.setItem('socketID', ID)
     });
-	
-	  useFocusEffect(
-		useCallback(() => {
-		  // Clear all active and inactive queries
-		queryClient.removeQueries({ msgThread, exact: true });
-		}, [queryClient, msgThread])
-	  );	
 
     useLayoutEffect(() => {
         // Update the title based on dynamic data
@@ -57,21 +49,21 @@ export default function ChatInputPage() {
 		console.log('chatId: ' + chatId);
     }, []); 
 
-
     const { data: msgThread, isPending, error } = useQuery({
         queryKey: ['msgThread', msgIds], // Unique key for caching. Add state variable to array to trigger refetch on variable change
         queryFn: fetchMsgThread,
-		refetchOnMount: "always",
+		gcTime: 0,
     });
 
-    const addMsgToRoomDb = async (roomName: any, messageId: any, userId: any) => {
+    const addMsgToRoomDb = async (roomName: any, messageId: any, senderId: any, receiverId: any) => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages/add`,{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 name: roomName,
                 messages: messageId,
-				sender: userId,
+				sender: senderId,
+				receiver: receiverId,
             })
         });
 		if (!res.ok) throw new Error('Unable to add message to room db');
@@ -96,30 +88,26 @@ export default function ChatInputPage() {
 			const newMsgIds = [...msgIds, res._id ];
 			setMsgIds(newMsgIds);
 			socket.emit('chat message', res);
-			addMsgToRoomDb(chatId, res._id, userId)
+			addMsgToRoomDb(roomId, res._id, userId, chatId)
 			setInputMsg('');
         } catch (error) {
             console.log(error);
         }        
     };
 
-    const Item = ({msg}:{msg: string}) => (
-        <View style={styles.messageBubbleRight}>
+    const ListItem = ({msg, sentBy}:{msg: string; sentBy: string}) => (
+        <View style={sentBy === userId ? styles.messageBubbleRight : styles.messageBubbleLeft}>
             <Text style={styles.messageText}>{msg}</Text>
         </View>
     );  
 	
-/*
     if (isPending) return <Text>Loading...</Text>;
-    if (isError) {
-		return <Text>Error: {error?.message}</Text>;
-  }
- */
+    if (error) return <Text>Error: {error?.message}</Text>;
  
     return (
         <KeyboardAvoidingView style={styles.container} >
             <FlatList inverted={true} data={msgThread} 
-              renderItem={({item}) => <Item msg={item.text} />} keyExtractor={item => item._id}
+              renderItem={({item}) => <ListItem msg={item.text} sentBy={item.sender} />} keyExtractor={item => item._id.toString()}
             />
             <View style={styles.inputContainer}>
                 <TextInput style={styles.input} value={inputMsg} onChangeText={ (text) => setInputMsg(text) } 
