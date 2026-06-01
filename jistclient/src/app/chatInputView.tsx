@@ -1,21 +1,18 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Text, TextInput, StyleSheet, KeyboardAvoidingView, FlatList, View, Pressable } from 'react-native';
 import socket from '../utils/socket.js';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useFocusEffect } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
 
 export default function ChatInputPage() {
     const srvIP = '192.168.0.100'
     const { chatName, chatId, userName, userId } = useLocalSearchParams();
     const navigation = useNavigation();
     const [ inputMsg, setInputMsg ] = useState('');
-    const [ msgIds, setMsgIds ] = useState(['']);
-	const queryClient = useQueryClient();
-    
+    const [ msgIds, setMsgIds ] = useState(['']); 
     const roomId = `${userId}${chatId}`;
-    
-    const fetchMsgThread = async () => {
+
+	const fetchMsgThread = async () => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -55,15 +52,8 @@ export default function ChatInputPage() {
     const { data: msgThread, isPending, error } = useQuery({
         queryKey: ['msgThread', msgIds], // Unique key for caching. Add state variable to array to trigger refetch on variable change
         queryFn: fetchMsgThread,
-		refetchOnMount: "always",
+		gcTime: 0,
     });
-
-    useFocusEffect(
-        useCallback(() => {
-            // Clear all active and inactive queries
-            queryClient.removeQueries({ queryKey: ['msgThread'], exact: true });
-        }, [queryClient, msgThread])
-    );
 
     const addMsgToRoomDb = async (roomName: any, messageId: any, senderId: any, receiverId: any) => {
         const res = await fetch(`http://${srvIP}:5000/api/v1/room/messages/add`,{
@@ -111,12 +101,8 @@ export default function ChatInputPage() {
         </View>
     );  
 	
-/*
     if (isPending) return <Text>Loading...</Text>;
-    if (isError) {
-		return <Text>Error: {error?.message}</Text>;
-  }
- */
+    if (error) return <Text>Error: {error?.message}</Text>;
  
     return (
         <KeyboardAvoidingView style={styles.container} >

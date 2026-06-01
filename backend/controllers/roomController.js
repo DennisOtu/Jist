@@ -36,7 +36,6 @@ export const addMessage = async (req, res) => {
                     { name: `${receiver}${sender}` },
                     { $push: { messages: messages } },
                     { returnDocument: 'after' } // Returns the updated document
-            
                 );
                 res.status(201).json(updatedRoom);
             } else {
@@ -44,7 +43,6 @@ export const addMessage = async (req, res) => {
                     { name: `${sender}${receiver}` },
                     { $push: { messages: messages } },
                     { returnDocument: 'after' } // Returns the updated document
-                
                 );
                 res.status(201).json(updatedRoom);
             } 
