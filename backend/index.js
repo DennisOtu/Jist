@@ -48,13 +48,12 @@ io.on('connection', (socket) => {
   socket.emit('socketID', socket.id);
   console.log(`${socket.id} Connected`);
 
-  socket.on('userConnected', (usr)=>{
-    socket.join(usr);
-    console.log(`${usr} joined room ${usr}`);    
+  socket.on('userConnected', ()=>{
+    console.log('Connected to socketIO client');    
   });
 
   socket.on('chat message', (newMsg) => {
-    console.log(`Message from ${newMsg.sender}: ${newMsg.text}`);
+    //console.log(`Message from ${newMsg.sender}: ${newMsg.text}`);
     socket.join(`${newMsg.sender}${newMsg.receiver}`);
     io.to(`${newMsg.sender}${newMsg.receiver}`).emit('chat message', newMsg);
   });
