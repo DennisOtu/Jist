@@ -22,6 +22,7 @@ export default function ChatInputPage() {
             }),
             credentials: 'include',
         });
+		
         if (!res.ok) throw new Error('Unable to fetch message thread');
 		//console.log(res.json());
         return res.json();
@@ -101,8 +102,40 @@ export default function ChatInputPage() {
         </View>
     );  
 	
-    if (isPending) return <Text>Loading...</Text>;
-    if (error) return <Text>Error: {error?.message}</Text>;
+    if (isPending) {
+		console.log('fetching data...');
+		return (
+			<KeyboardAvoidingView style={styles.container} >
+				<View style={{ flex: 1 }}></View>
+				<View style={styles.inputContainer}>
+					<TextInput style={styles.input} value={inputMsg} onChangeText={ (text) => setInputMsg(text) } 
+						placeholder="Type your message..."
+					/>
+					<Pressable onPress={() => handleSend(inputMsg)} style={styles.sendBtn}>
+						<Text style={{ color: 'white', fontWeight: 'bold'}}>Send</Text>
+					</Pressable>
+				</View>
+			</KeyboardAvoidingView>          
+		);
+	}
+    if (error) {
+		console.log(`Error: ${error.message}`);
+		return (
+			<KeyboardAvoidingView style={styles.container} >
+				<FlatList inverted={true} data={msgThread} 
+				  renderItem={({item}) => <ListItem msg={item.text} sentBy={item.sender} />} keyExtractor={item => item._id.toString()}
+				/>
+				<View style={styles.inputContainer}>
+					<TextInput style={styles.input} value={inputMsg} onChangeText={ (text) => setInputMsg(text) } 
+						placeholder="Type your message..."
+					/>
+					<Pressable onPress={() => handleSend(inputMsg)} style={styles.sendBtn}>
+						<Text style={{ color: 'white', fontWeight: 'bold'}}>Send</Text>
+					</Pressable>
+				</View>
+			</KeyboardAvoidingView>          
+		);
+	};
  
     return (
         <KeyboardAvoidingView style={styles.container} >

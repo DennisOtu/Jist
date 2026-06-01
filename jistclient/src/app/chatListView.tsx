@@ -5,15 +5,23 @@ import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import socket from '../utils/socket.js';
 
-const fetchUsers = async () => {
-    const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers');
-    if (!response.ok) throw new Error('Unable to fetch users');
-    return response.json();
-};
-
 export default function ChatListPage(){
 	const { userName, userId } = useLocalSearchParams();
     
+	const fetchUsers = async () => {
+		const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                userId: userId,
+            }),
+            credentials: 'include'		
+		});
+		
+		if (!response.ok) throw new Error('Unable to fetch users');
+		return response.json();
+	};
+		
     const { data: users, isPending, error } = useQuery({
         queryKey: ['users'], // Unique key for caching
         queryFn: fetchUsers,
