@@ -5,8 +5,8 @@ import socket from '../utils/socket.js';
 import { useQuery } from '@tanstack/react-query';
 
 export default function ChatInputPage() {
-    const srvIP = '192.168.0.100'
-    const { chatName, chatId, userName, userId } = useLocalSearchParams();
+    const srvIP = '192.168.0.101'
+    const { chatName, chatId, userId } = useLocalSearchParams();
     const navigation = useNavigation();
     const [ inputMsg, setInputMsg ] = useState('');
     const [ msgIds, setMsgIds ] = useState(['']); 
@@ -24,19 +24,17 @@ export default function ChatInputPage() {
         });
 		
         if (!res.ok) throw new Error('Unable to fetch message thread');
-		//console.log(res.json());
+		console.log('data: message thread');
         return res.json();
     }    
 	
     socket.on('chat message', (newMsg) => {
-        console.log(`Message from ${newMsg.sender} : ${newMsg.text}`);
         const newMsgIds = [...msgIds, newMsg._id ];
         setMsgIds(newMsgIds);
     });
 	
     socket.on('socketID',(ID) => {
         console.log(`My Socket Id: ${ID}`)
-        //sessionStorage.setItem('socketID', ID)
     });
 
     useLayoutEffect(() => {
@@ -44,10 +42,6 @@ export default function ChatInputPage() {
         navigation.setOptions({ 
             title: chatName 
         });
-        console.log('userName: ' + userName);
-        console.log('userId: ' + userId);
-        console.log('chatName: ' + chatName);
-		console.log('chatId: ' + chatId);
     }, []); 
 
     const { data: msgThread, isPending, error } = useQuery({
@@ -164,6 +158,7 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         padding: 10,
+		marginBottom: 20,
     },    
     input: {
         flex: 1,
@@ -182,7 +177,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 12,
         borderBottomRightRadius: 12,
         maxWidth: '80%',
-        backgroundColor: '#00e36a'
+        backgroundColor: '#397c41'
     },
     messageBubbleRight: {
 		flex: 1,

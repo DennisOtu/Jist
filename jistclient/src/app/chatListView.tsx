@@ -6,10 +6,10 @@ import { useLocalSearchParams } from 'expo-router';
 import socket from '../utils/socket.js';
 
 export default function ChatListPage(){
-	const { userName, userId } = useLocalSearchParams();
+	const { userId } = useLocalSearchParams();
     
 	const fetchUsers = async () => {
-		const response = await fetch('http://192.168.0.100:5000/api/v1/auth/allusers', {
+		const response = await fetch('http://192.168.0.101:5000/api/v1/auth/allusers', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -36,7 +36,7 @@ export default function ChatListPage(){
     }
 
     const ListItem = ({ name, id }: { name: string; id: string }) => (
-        <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}`, chatId: `${id}`, userName: `${userName}`, userId: `${userId}` }}}  
+        <Link href={{ pathname: "/chatInputView", params: { chatName: `${name}`, chatId: `${id}`, userId: `${userId}` }}}  
             onPress={() => console.log(`${name} chat link pressed`)} asChild >
                 <Pressable style={styles.chatLink}>
                     <Image style={styles.chatLinkImg} source={{ uri: 'https://placehold.net/avatar-5.png' }}/>        
