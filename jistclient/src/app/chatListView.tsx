@@ -30,9 +30,8 @@ export default function ChatListPage(){
 	socket.on('connect', connectUser);
 
     function connectUser () {  
-        const usr = userId 
-        if (!usr) return;
-        socket.emit('userConnected', usr);
+		console.log('Connected to socketIO server');
+        socket.emit('userConnected');
     }
 
     const ListItem = ({ name, id }: { name: string; id: string }) => (

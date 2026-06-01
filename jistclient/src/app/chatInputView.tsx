@@ -32,11 +32,11 @@ export default function ChatInputPage() {
         const newMsgIds = [...msgIds, newMsg._id ];
         setMsgIds(newMsgIds);
     });
-	
+/*	
     socket.on('socketID',(ID) => {
         console.log(`My Socket Id: ${ID}`)
     });
-
+*/
     useLayoutEffect(() => {
         // Update the title based on dynamic data
         navigation.setOptions({ 
@@ -66,7 +66,7 @@ export default function ChatInputPage() {
     }
     
     const handleSend = async (inputMsg: string) => {
-        console.log('send button pressed');
+        console.log('sending message...');
         if (inputMsg.trim() === '') return;
 
         try {
