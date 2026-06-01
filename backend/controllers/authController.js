@@ -74,14 +74,14 @@ export const verifyUser = (req, res, next)=>{
 }
 
 export const getAll = async (req, res) => {
+	const { userId } = req.body;
     try {
-        const allUsers = await User.find({});
+        const allUsers = await User.find({ _id: { $ne: userId } });
         res.status(200).json(allUsers);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 }
-
 
 export const logout = (req, res) => {
     res.cookie('jwt',"",{maxAge:1});
